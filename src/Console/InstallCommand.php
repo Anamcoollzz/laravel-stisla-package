@@ -45,7 +45,6 @@ class InstallCommand extends Command
         ]);
 
         $this->registerRoutesInWebPhp($module);
-        $this->ensureAppConfigKeys();
         $this->ensureEnvKeys($module);
 
         if ($this->option('seed')) {
@@ -83,19 +82,19 @@ class InstallCommand extends Command
         ];
 
         if (in_array($module, ['online-shop', 'all'], true)) {
-            $blocks[] = "if (config('app.menu_app') === 'online-shop') {\n    require __DIR__.'/ecommerce-pages-web.php';\n}";
+            $blocks[] = "if (config('stisla.menu_app') === 'online-shop') {\n    require __DIR__.'/ecommerce-pages-web.php';\n}";
         }
 
         if (in_array($module, ['spp-payment', 'all'], true)) {
-            $blocks[] = "if (config('app.menu_app') === 'spp-payment') {\n    require __DIR__.'/spp-payment-web.php';\n}";
+            $blocks[] = "if (config('stisla.menu_app') === 'spp-payment') {\n    require __DIR__.'/spp-payment-web.php';\n}";
         }
 
         if (in_array($module, ['news', 'all'], true)) {
-            $blocks[] = "if (config('app.menu_app') === 'news') {\n    require __DIR__.'/news-web.php';\n}";
+            $blocks[] = "if (config('stisla.menu_app') === 'news') {\n    require __DIR__.'/news-web.php';\n}";
         }
 
         if (in_array($module, ['lp-compro-workers', 'all'], true)) {
-            $blocks[] = "if (config('app.menu_app') === 'lp-compro-workers') {\n    require __DIR__.'/lp-compro-web.php';\n}";
+            $blocks[] = "if (config('stisla.menu_app') === 'lp-compro-workers') {\n    require __DIR__.'/lp-compro-web.php';\n}";
         }
 
         $toAppend = [];
@@ -113,42 +112,15 @@ class InstallCommand extends Command
     }
 
     /**
-     * Ensure is_demo and menu_app keys exist in config/app.php.
-     */
-    protected function ensureAppConfigKeys(): void
-    {
-        $appConfigPath = config_path('app.php');
-        if (! $this->files->exists($appConfigPath)) {
-            return;
-        }
-
-        $content = $this->files->get($appConfigPath);
-        if (str_contains($content, "'is_demo'") && str_contains($content, "'menu_app'")) {
-            return;
-        }
-
-        $insertion = "\n    'is_demo' => (bool) env('APP_IS_DEMO', false),\n\n    'menu_app' => env('ADMIN_MENU_APP', 'online-shop'),\n";
-        $updated = preg_replace(
-            "/('debug'\s*=>\s*[^,\n]+,)/",
-            "$1\n".$insertion,
-            $content,
-            1
-        );
-
-        if (is_string($updated) && $updated !== $content) {
-            $this->files->put($appConfigPath, $updated);
-        }
-    }
-
-    /**
      * Ensure required environment keys exist in .env and .env.example.
      */
     protected function ensureEnvKeys(string $module): void
     {
         $menuApp = $module === 'all' || $module === 'core' ? 'online-shop' : $module;
         $defaults = [
-            'APP_IS_DEMO' => 'false',
-            'ADMIN_MENU_APP' => $menuApp,
+            'STISLA_IS_DEMO' => 'false',
+            'STISLA_ADMIN_TEMPLATE' => 'stisla',
+            'STISLA_ADMIN_MENU_APP' => $menuApp,
         ];
 
         foreach ([base_path('.env'), base_path('.env.example')] as $envPath) {
