@@ -45,6 +45,7 @@ class InstallCommand extends Command
         ]);
 
         $this->registerRoutesInWebPhp($module);
+        $this->ensureAppConfigKeys();
         $this->ensureEnvKeys($module);
 
         if ($this->option('seed')) {
@@ -108,6 +109,34 @@ class InstallCommand extends Command
 
         if ($toAppend !== []) {
             $this->files->append($webPath, "\n".implode("\n\n", $toAppend)."\n");
+        }
+    }
+
+    /**
+     * Ensure is_demo and menu_app keys exist in config/app.php.
+     */
+    protected function ensureAppConfigKeys(): void
+    {
+        $appConfigPath = config_path('app.php');
+        if (! $this->files->exists($appConfigPath)) {
+            return;
+        }
+
+        $content = $this->files->get($appConfigPath);
+        if (str_contains($content, "'is_demo'") && str_contains($content, "'menu_app'")) {
+            return;
+        }
+
+        $insertion = "\n    'is_demo' => (bool) env('APP_IS_DEMO', false),\n\n    'menu_app' => env('ADMIN_MENU_APP', 'online-shop'),\n";
+        $updated = preg_replace(
+            "/('debug'\s*=>\s*[^,\n]+,)/",
+            "$1\n".$insertion,
+            $content,
+            1
+        );
+
+        if (is_string($updated) && $updated !== $content) {
+            $this->files->put($appConfigPath, $updated);
         }
     }
 
