@@ -1,5 +1,5 @@
 {
-    "name": "laravel-stisla/stisla",
+    "name": "anamcoollzz/laravel-stisla-package",
     "description": "Publishable Laravel Stisla admin panel, auth, RBAC, and modular app starter package.",
     "type": "library",
     "license": "MIT",
