@@ -119,6 +119,7 @@ class InstallCommand extends Command
         $menuApp = $module === 'all' || $module === 'core' ? 'online-shop' : $module;
         $defaults = [
             'STISLA_IS_DEMO' => 'false',
+            'STISLA_IS_DEMO_MENU' => 'false',
             'STISLA_ADMIN_TEMPLATE' => 'stisla',
             'STISLA_ADMIN_MENU_APP' => $menuApp,
             'GOOGLE_CLIENT_ID' => '',

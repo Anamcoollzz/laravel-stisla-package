@@ -46,12 +46,14 @@ Configuration is published to `config/stisla.php` (`is_demo`, `admin_template`, 
 
 ```dotenv
 STISLA_IS_DEMO=false
+STISLA_IS_DEMO_MENU=false
 STISLA_ADMIN_TEMPLATE=stisla
 STISLA_ADMIN_MENU_APP=online-shop
 ```
 
 - `STISLA_ADMIN_MENU_APP`: Switches active sidebar menus and modular routes (`online-shop`, `news`, `spp-payment`, `lp-compro-workers`). If you change this value while route caching is enabled, run `php artisan route:cache` (or `php artisan route:clear`).
 - `STISLA_IS_DEMO`: Set to `true` to enable demo mode protections (`PreventInDemoMode` middleware, disabled destructive backup/database actions, and demo account quick-fill on login pages).
+- `STISLA_IS_DEMO_MENU`: Set to `true` to display the 82 static Stisla template demo pages in the sidebar instead of the dynamic application menus.
 
 ## Selective Publishing
 
