@@ -39,6 +39,7 @@ class StislaServiceProvider extends ServiceProvider
             'stisla-requests' => [$stubsPath.'/app/Http/Requests' => app_path('Http/Requests')],
             'stisla-imports' => [$stubsPath.'/app/Imports' => app_path('Imports')],
             'stisla-mail' => [$stubsPath.'/app/Mail' => app_path('Mail')],
+            'stisla-providers' => [$stubsPath.'/app/Providers' => app_path('Providers')],
             'stisla-services' => [$stubsPath.'/app/Services' => app_path('Services')],
             'stisla-config' => [$stubsPath.'/config' => config_path()],
             'stisla-views' => [$stubsPath.'/resources/views' => resource_path('views')],
