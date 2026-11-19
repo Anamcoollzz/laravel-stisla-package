@@ -121,6 +121,9 @@ class InstallCommand extends Command
             'STISLA_IS_DEMO' => 'false',
             'STISLA_ADMIN_TEMPLATE' => 'stisla',
             'STISLA_ADMIN_MENU_APP' => $menuApp,
+            'GOOGLE_CLIENT_ID' => '',
+            'GOOGLE_CLIENT_SECRET' => '',
+            'GOOGLE_REDIRECT_URI' => '"${APP_URL}/app/auth/google/callback"',
         ];
 
         foreach ([base_path('.env'), base_path('.env.example')] as $envPath) {
