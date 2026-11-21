@@ -2,17 +2,22 @@
 
 namespace App\Models;
 
+use App\Observers\MenuObserver;
 use Database\Factories\MenuFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
 
 #[Fillable(['app', 'parent_id', 'name', 'type', 'icon', 'route', 'url', 'permission', 'order', 'is_active'])]
+#[ObservedBy([MenuObserver::class])]
 class Menu extends Model
 {
     /** @use HasFactory<MenuFactory> */
@@ -59,12 +64,94 @@ class Menu extends Model
         return static::query()
             ->pluck('app')
             ->flatten()
-            ->merge(['online-shop', 'news', 'lp-compro-workers'])
+            ->merge(['online-shop', 'spp-payment', 'news', 'lp-compro-workers'])
             ->map(fn (mixed $item): string => trim((string) $item))
             ->filter()
             ->unique()
             ->sort()
             ->values();
+    }
+
+    /**
+     * In-memory request-level cache keyed by app identifier.
+     *
+     * @var array<string, Collection<int, self>>
+     */
+    protected static array $memoizedSidebars = [];
+
+    /**
+     * Retrieve the cached sidebar menu tree for the given app identifier.
+     *
+     * @return Collection<int, self>
+     */
+    public static function sidebarForApp(string $menuApp): Collection
+    {
+        if (isset(static::$memoizedSidebars[$menuApp])) {
+            return static::$memoizedSidebars[$menuApp];
+        }
+
+        $cached = Cache::get("stisla.menus.{$menuApp}");
+
+        if (! is_array($cached)) {
+            Cache::forget("stisla.menus.{$menuApp}");
+
+            $cached = Cache::rememberForever("stisla.menus.{$menuApp}", function () use ($menuApp): array {
+                return static::query()
+                    ->with(['children' => fn ($query) => $query->where('is_active', true)->forApp($menuApp)->orderBy('order')])
+                    ->forApp($menuApp)
+                    ->whereNull('parent_id')
+                    ->where('is_active', true)
+                    ->orderBy('order')
+                    ->get()
+                    ->map(function (self $menu): array {
+                        $attributes = $menu->getAttributes();
+                        $attributes['children'] = $menu->children
+                            ->map(fn (self $child): array => $child->getAttributes())
+                            ->values()
+                            ->all();
+
+                        return $attributes;
+                    })
+                    ->values()
+                    ->all();
+            });
+        }
+
+        $menus = collect($cached)->map(function (array $row): self {
+            $childrenRows = is_array($row['children'] ?? null) ? $row['children'] : [];
+            unset($row['children']);
+
+            /** @var self $menu */
+            $menu = (new static)->newFromBuilder($row);
+            $children = collect($childrenRows)->map(fn (array $childRow): self => (new static)->newFromBuilder($childRow));
+            $menu->setRelation('children', $children);
+
+            return $menu;
+        });
+
+        return static::$memoizedSidebars[$menuApp] = $menus;
+    }
+
+    /**
+     * Flush cached sidebar menus for all known and affected app identifiers.
+     *
+     * @param  array<int, mixed>|null  $extraApps
+     */
+    public static function flushSidebarCache(?array $extraApps = null): void
+    {
+        static::$memoizedSidebars = [];
+
+        $apps = collect(['online-shop', 'spp-payment', 'news', 'lp-compro-workers', (string) config('stisla.menu_app', 'online-shop')])
+            ->merge($extraApps ?? []);
+
+        if (Schema::hasTable('menus')) {
+            $apps = $apps->merge(static::distinctApps());
+        }
+
+        $apps->map(fn (mixed $app): string => trim((string) $app))
+            ->filter()
+            ->unique()
+            ->each(fn (string $app) => Cache::forget("stisla.menus.{$app}"));
     }
 
     /**

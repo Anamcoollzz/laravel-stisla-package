@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\Rules\Password;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -44,6 +45,42 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Password::defaults(function () {
+            $minLength = 8;
+            $requireMixedCase = false;
+            $requireNumbers = false;
+            $requireSymbols = false;
+            $uncompromised = false;
+
+            if (Schema::hasTable('settings')) {
+                $minLength = max(6, (int) (Setting::getValue('password_min_length', '8') ?: 8));
+                $requireMixedCase = Setting::getValue('password_require_mixed_case', '0') === '1';
+                $requireNumbers = Setting::getValue('password_require_numbers', '0') === '1';
+                $requireSymbols = Setting::getValue('password_require_symbols', '0') === '1';
+                $uncompromised = Setting::getValue('password_uncompromised', '0') === '1';
+            }
+
+            $rule = Password::min($minLength);
+
+            if ($requireMixedCase) {
+                $rule->mixedCase();
+            }
+
+            if ($requireNumbers) {
+                $rule->numbers();
+            }
+
+            if ($requireSymbols) {
+                $rule->symbols();
+            }
+
+            if ($uncompromised) {
+                $rule->uncompromised();
+            }
+
+            return $rule;
+        });
+
         Vite::useBuildDirectory('lp-build');
         Blade::anonymousComponentPath(resource_path('views/lp/components'));
 
@@ -87,18 +124,8 @@ class AppServiceProvider extends ServiceProvider
             }
         });
 
-        Event::listen(Login::class, function (Login $event): void {
-            if ($event->user instanceof User) {
-                $event->user->forceFill(['last_logged_in' => now()])->saveQuietly();
-            }
-        });
-
         View::composer('layouts.app', function ($view) {
             $authUser = auth()->user();
-
-            if ($authUser instanceof User && $authUser->last_logged_in === null) {
-                $authUser->forceFill(['last_logged_in' => now()])->saveQuietly();
-            }
 
             if ($authUser instanceof User && $authUser->last_logged_in === null) {
                 $authUser->forceFill(['last_logged_in' => now()])->saveQuietly();
@@ -107,39 +134,17 @@ class AppServiceProvider extends ServiceProvider
             if ($authUser === null || ! Schema::hasTable('chat_messages')) {
                 $view->with('navMessages', collect())->with('navUnreadCount', 0);
             } else {
-                $navMessages = ChatMessage::query()
-                    ->where('receiver_id', $authUser->id)
-                    ->with('sender')
-                    ->latest('id')
-                    ->limit(30)
-                    ->get()
-                    ->unique('sender_id')
-                    ->take(5)
-                    ->values();
-
-                $view->with('navMessages', $navMessages)->with(
-                    'navUnreadCount',
-                    ChatMessage::query()->where('receiver_id', $authUser->id)->where('is_read', false)->count()
-                );
+                $chatSummary = ChatMessage::navbarSummaryForUser((int) $authUser->id);
+                $view->with('navMessages', $chatSummary['messages'])
+                    ->with('navUnreadCount', $chatSummary['unread_count']);
             }
 
             if ($authUser === null || ! Schema::hasTable('app_notifications')) {
                 $view->with('navNotifications', collect())->with('navNotificationUnreadCount', 0);
             } else {
-                $navNotifications = AppNotification::query()
-                    ->forUser($authUser->id)
-                    ->with(['readers' => fn ($query) => $query->where('users.id', $authUser->id)])
-                    ->latest('id')
-                    ->limit(10)
-                    ->get();
-
-                $navNotificationUnreadCount = AppNotification::query()
-                    ->forUser($authUser->id)
-                    ->whereDoesntHave('readers', fn ($query) => $query->where('users.id', $authUser->id))
-                    ->count();
-
-                $view->with('navNotifications', $navNotifications)
-                    ->with('navNotificationUnreadCount', $navNotificationUnreadCount);
+                $notificationSummary = AppNotification::navbarSummaryForUser((int) $authUser->id);
+                $view->with('navNotifications', $notificationSummary['notifications'])
+                    ->with('navNotificationUnreadCount', $notificationSummary['unread_count']);
             }
         });
 
@@ -154,13 +159,7 @@ class AppServiceProvider extends ServiceProvider
         View::composer(['layouts.app', 'partials.sidebar-pages'], function ($view) {
             if (Schema::hasTable('menus')) {
                 $menuApp = (string) config('stisla.menu_app', 'online-shop');
-                $sidebarMenus = Menu::query()
-                    ->with(['children' => fn ($query) => $query->where('is_active', true)->forApp($menuApp)->orderBy('order')])
-                    ->forApp($menuApp)
-                    ->whereNull('parent_id')
-                    ->where('is_active', true)
-                    ->orderBy('order')
-                    ->get();
+                $sidebarMenus = Menu::sidebarForApp($menuApp);
 
                 $view->with('sidebarMenus', $sidebarMenus);
             }
