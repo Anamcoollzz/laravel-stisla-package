@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\ApiTokenController;
 use App\Http\Controllers\AppNotificationController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\GoogleAuthController;
@@ -9,21 +10,30 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\BackupController;
+use App\Http\Controllers\CacheManagementController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DatabaseTableController;
+use App\Http\Controllers\FileManagerController;
+use App\Http\Controllers\IpBlacklistController;
 use App\Http\Controllers\LaravelLogController;
 use App\Http\Controllers\LocaleController;
+use App\Http\Controllers\LoginHistoryController;
 use App\Http\Controllers\LogRequestController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OurTeamController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PrivacyPolicyController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProjectFileEditorController;
+use App\Http\Controllers\QueueMonitorController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\ScheduledTaskController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\SystemHealthController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserSessionController;
 use App\Http\Middleware\PreventInDemoMode;
 use Illuminate\Support\Facades\Route;
 
@@ -61,6 +71,9 @@ Route::prefix('app')->group(function () {
 
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+        Route::post('/settings/email/test', [SettingController::class, 'sendTestEmail'])
+            ->middleware(PreventInDemoMode::class)
+            ->name('settings.email.test');
         Route::get('/settings/{group}', [SettingController::class, 'show'])->name('settings.show');
         Route::put('/settings/{group}', [SettingController::class, 'update'])->name('settings.update');
         Route::delete('/settings/{group}', [SettingController::class, 'reset'])->name('settings.reset');
@@ -118,6 +131,38 @@ Route::prefix('app')->group(function () {
         Route::delete('backups/{filename}', [BackupController::class, 'destroy'])->name('backups.destroy');
 
         Route::middleware(PreventInDemoMode::class)->group(function () {
+            Route::get('system-health', [SystemHealthController::class, 'index'])->name('system-health.index');
+            Route::get('user-sessions', [UserSessionController::class, 'index'])->name('user-sessions.index');
+            Route::delete('user-sessions/revoke-others', [UserSessionController::class, 'destroyOthers'])->name('user-sessions.destroy-others');
+            Route::delete('user-sessions/user/{user}', [UserSessionController::class, 'destroyUserSessions'])->name('user-sessions.destroy-user');
+            Route::delete('user-sessions/{sessionId}', [UserSessionController::class, 'destroy'])->name('user-sessions.destroy');
+
+            Route::get('login-histories', [LoginHistoryController::class, 'index'])->name('login-histories.index');
+            Route::delete('login-histories/clear', [LoginHistoryController::class, 'clear'])->name('login-histories.clear');
+            Route::delete('login-histories/{loginHistory}', [LoginHistoryController::class, 'destroy'])->name('login-histories.destroy');
+
+            Route::get('ip-blacklists', [IpBlacklistController::class, 'index'])->name('ip-blacklists.index');
+            Route::post('ip-blacklists', [IpBlacklistController::class, 'store'])->name('ip-blacklists.store');
+            Route::put('ip-blacklists/{ipBlacklist}', [IpBlacklistController::class, 'update'])->name('ip-blacklists.update');
+            Route::patch('ip-blacklists/{ipBlacklist}/toggle-active', [IpBlacklistController::class, 'toggleActive'])->name('ip-blacklists.toggle-active');
+            Route::delete('ip-blacklists/{ipBlacklist}', [IpBlacklistController::class, 'destroy'])->name('ip-blacklists.destroy');
+
+            Route::get('api-tokens', [ApiTokenController::class, 'index'])->name('api-tokens.index');
+            Route::post('api-tokens', [ApiTokenController::class, 'store'])->name('api-tokens.store');
+            Route::put('api-tokens/{apiToken}', [ApiTokenController::class, 'update'])->name('api-tokens.update');
+            Route::delete('api-tokens/user/{user}', [ApiTokenController::class, 'revokeUserTokens'])->name('api-tokens.revoke-user');
+            Route::delete('api-tokens/{apiToken}', [ApiTokenController::class, 'destroy'])->name('api-tokens.destroy');
+
+            Route::get('file-manager', [FileManagerController::class, 'index'])->name('file-manager.index');
+            Route::get('file-manager/preview', [FileManagerController::class, 'preview'])->name('file-manager.preview');
+            Route::get('file-manager/download', [FileManagerController::class, 'download'])->name('file-manager.download');
+            Route::get('file-manager/edit', [FileManagerController::class, 'edit'])->name('file-manager.edit');
+            Route::post('file-manager/upload', [FileManagerController::class, 'upload'])->name('file-manager.upload');
+            Route::post('file-manager/folder', [FileManagerController::class, 'storeFolder'])->name('file-manager.folder.store');
+            Route::post('file-manager/file', [FileManagerController::class, 'storeFile'])->name('file-manager.file.store');
+            Route::patch('file-manager/rename', [FileManagerController::class, 'rename'])->name('file-manager.rename');
+            Route::put('file-manager/content', [FileManagerController::class, 'updateContent'])->name('file-manager.content.update');
+            Route::delete('file-manager', [FileManagerController::class, 'destroy'])->name('file-manager.destroy');
             Route::delete('activity-logs/clear', [ActivityLogController::class, 'clear'])->name('activity-logs.clear');
             Route::resource('activity-logs', ActivityLogController::class)->only(['index', 'show', 'destroy'])->parameters([
                 'activity-logs' => 'activityLog',
@@ -139,6 +184,34 @@ Route::prefix('app')->group(function () {
             Route::delete('database-tables/{table}/columns/{column}', [DatabaseTableController::class, 'destroyColumn'])->name('database-tables.columns.destroy');
             Route::put('database-tables/{table}/rows/{rowId}', [DatabaseTableController::class, 'updateRow'])->name('database-tables.rows.update');
             Route::delete('database-tables/{table}/rows/{rowId}', [DatabaseTableController::class, 'destroyRow'])->name('database-tables.rows.destroy');
+
+            Route::get('cache-management', [CacheManagementController::class, 'index'])->name('cache-management.index');
+            Route::post('cache-management/execute', [CacheManagementController::class, 'execute'])->name('cache-management.execute');
+            Route::post('cache-management/forget-key', [CacheManagementController::class, 'forgetKey'])->name('cache-management.forget-key');
+
+            Route::get('project-files', [ProjectFileEditorController::class, 'index'])->name('project-files.index');
+            Route::get('project-files/edit', [ProjectFileEditorController::class, 'edit'])->name('project-files.edit');
+            Route::put('project-files/update', [ProjectFileEditorController::class, 'update'])->name('project-files.update');
+            Route::post('project-files/file', [ProjectFileEditorController::class, 'storeFile'])->name('project-files.file.store');
+            Route::post('project-files/folder', [ProjectFileEditorController::class, 'storeFolder'])->name('project-files.folder.store');
+            Route::patch('project-files/rename', [ProjectFileEditorController::class, 'rename'])->name('project-files.rename');
+            Route::delete('project-files', [ProjectFileEditorController::class, 'destroy'])->name('project-files.destroy');
+
+            Route::get('scheduled-tasks', [ScheduledTaskController::class, 'index'])->name('scheduled-tasks.index');
+            Route::post('scheduled-tasks/run-now', [ScheduledTaskController::class, 'runNow'])->name('scheduled-tasks.run-now');
+            Route::post('scheduled-tasks/run-due', [ScheduledTaskController::class, 'runDue'])->name('scheduled-tasks.run-due');
+            Route::delete('scheduled-tasks/clear', [ScheduledTaskController::class, 'clear'])->name('scheduled-tasks.clear');
+            Route::delete('scheduled-tasks/{scheduledTaskRun}', [ScheduledTaskController::class, 'destroy'])->name('scheduled-tasks.destroy');
+
+            Route::get('queue-monitor', [QueueMonitorController::class, 'index'])->name('queue-monitor.index');
+            Route::post('queue-monitor/work', [QueueMonitorController::class, 'work'])->name('queue-monitor.work');
+            Route::post('queue-monitor/failed/retry-all', [QueueMonitorController::class, 'retryAllFailed'])->name('queue-monitor.failed.retry-all');
+            Route::post('queue-monitor/failed/{uuid}/retry', [QueueMonitorController::class, 'retryFailed'])->name('queue-monitor.failed.retry');
+            Route::delete('queue-monitor/failed/flush', [QueueMonitorController::class, 'flushFailed'])->name('queue-monitor.failed.flush');
+            Route::delete('queue-monitor/failed/{uuid}', [QueueMonitorController::class, 'forgetFailed'])->name('queue-monitor.failed.forget');
+            Route::delete('queue-monitor/pending/clear', [QueueMonitorController::class, 'clearPending'])->name('queue-monitor.pending.clear');
+            Route::delete('queue-monitor/pending/{id}', [QueueMonitorController::class, 'destroyPending'])->name('queue-monitor.pending.destroy');
+            Route::delete('queue-monitor/history/clear', [QueueMonitorController::class, 'clearHistory'])->name('queue-monitor.history.clear');
         });
     });
 });

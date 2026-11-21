@@ -16,11 +16,20 @@ use App\Models\ProductBanner;
 use App\Models\ProductCart;
 use App\Models\ProductCategory;
 use App\Models\ProductWishlist;
+use App\Models\QueueMonitor;
+use App\Models\ScheduledTaskRun;
 use App\Models\Setting;
 use App\Models\StoreService;
 use App\Models\Testimonial;
 use App\Models\User;
+use App\Services\ScheduledTaskService;
 use Illuminate\Auth\Events\Login;
+use Illuminate\Console\Events\ScheduledTaskFailed;
+use Illuminate\Console\Events\ScheduledTaskFinished;
+use Illuminate\Console\Events\ScheduledTaskStarting;
+use Illuminate\Queue\Events\JobFailed;
+use Illuminate\Queue\Events\JobProcessed;
+use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
@@ -451,5 +460,218 @@ class AppServiceProvider extends ServiceProvider
                 $view->with('popularNewsPosts', collect());
             }
         });
+
+        $this->registerScheduledTaskListeners();
+        $this->registerQueueMonitorListeners();
+        $this->applyMailConfiguration();
+    }
+
+    /**
+     * Automatically record Laravel scheduler runs into scheduled_task_runs.
+     */
+    private function registerScheduledTaskListeners(): void
+    {
+        $activeRuns = [];
+
+        Event::listen(ScheduledTaskStarting::class, function (ScheduledTaskStarting $event) use (&$activeRuns): void {
+            if (! Schema::hasTable('scheduled_task_runs')) {
+                return;
+            }
+
+            $service = app(ScheduledTaskService::class);
+            $taskKey = $service->taskKey($event->task);
+
+            $run = ScheduledTaskRun::query()->create([
+                'task_key' => $taskKey,
+                'command' => $service->formatCommand($event->task),
+                'description' => $event->task->description ?: null,
+                'expression' => (string) $event->task->expression,
+                'status' => 'running',
+                'triggered_by' => 'scheduler',
+                'started_at' => now(),
+            ]);
+
+            $activeRuns[$taskKey] = [
+                'id' => $run->id,
+                'start' => microtime(true),
+            ];
+        });
+
+        Event::listen(ScheduledTaskFinished::class, function (ScheduledTaskFinished $event) use (&$activeRuns): void {
+            if (! Schema::hasTable('scheduled_task_runs')) {
+                return;
+            }
+
+            $service = app(ScheduledTaskService::class);
+            $taskKey = $service->taskKey($event->task);
+            $meta = $activeRuns[$taskKey] ?? null;
+            unset($activeRuns[$taskKey]);
+
+            $durationMs = $meta
+                ? (int) round((microtime(true) - $meta['start']) * 1000)
+                : (int) round($event->runtime * 1000);
+
+            $exitCode = (int) ($event->task->exitCode ?? 0);
+
+            if ($meta) {
+                ScheduledTaskRun::query()->whereKey($meta['id'])->update([
+                    'status' => $exitCode === 0 ? 'success' : 'failed',
+                    'exit_code' => $exitCode,
+                    'duration_ms' => $durationMs,
+                    'finished_at' => now(),
+                ]);
+            }
+        });
+
+        Event::listen(ScheduledTaskFailed::class, function (ScheduledTaskFailed $event) use (&$activeRuns): void {
+            if (! Schema::hasTable('scheduled_task_runs')) {
+                return;
+            }
+
+            $service = app(ScheduledTaskService::class);
+            $taskKey = $service->taskKey($event->task);
+            $meta = $activeRuns[$taskKey] ?? null;
+            unset($activeRuns[$taskKey]);
+
+            $durationMs = $meta ? (int) round((microtime(true) - $meta['start']) * 1000) : null;
+
+            if ($meta) {
+                ScheduledTaskRun::query()->whereKey($meta['id'])->update([
+                    'status' => 'failed',
+                    'exit_code' => 1,
+                    'duration_ms' => $durationMs,
+                    'output' => $event->exception->getMessage(),
+                    'finished_at' => now(),
+                ]);
+            }
+        });
+    }
+
+    /**
+     * Automatically record queue job lifecycle events into queue_monitors.
+     */
+    private function registerQueueMonitorListeners(): void
+    {
+        $activeJobs = [];
+
+        Event::listen(JobProcessing::class, function (JobProcessing $event) use (&$activeJobs): void {
+            if (! Schema::hasTable('queue_monitors')) {
+                return;
+            }
+
+            $jobId = (string) ($event->job->getJobId() ?: spl_object_id($event->job));
+
+            $monitor = QueueMonitor::query()->create([
+                'job_id' => $jobId,
+                'job_name' => $event->job->resolveName(),
+                'connection' => $event->connectionName,
+                'queue' => $event->job->getQueue() ?: 'default',
+                'status' => 'running',
+                'attempts' => $event->job->attempts(),
+                'started_at' => now(),
+            ]);
+
+            $activeJobs[$jobId] = [
+                'id' => $monitor->id,
+                'start' => microtime(true),
+            ];
+        });
+
+        Event::listen(JobProcessed::class, function (JobProcessed $event) use (&$activeJobs): void {
+            if (! Schema::hasTable('queue_monitors')) {
+                return;
+            }
+
+            $jobId = (string) ($event->job->getJobId() ?: spl_object_id($event->job));
+            $meta = $activeJobs[$jobId] ?? null;
+            unset($activeJobs[$jobId]);
+
+            if ($meta) {
+                QueueMonitor::query()->whereKey($meta['id'])->update([
+                    'status' => 'succeeded',
+                    'duration_ms' => (int) round((microtime(true) - $meta['start']) * 1000),
+                    'finished_at' => now(),
+                ]);
+            }
+        });
+
+        Event::listen(JobFailed::class, function (JobFailed $event) use (&$activeJobs): void {
+            if (! Schema::hasTable('queue_monitors')) {
+                return;
+            }
+
+            $jobId = (string) ($event->job->getJobId() ?: spl_object_id($event->job));
+            $meta = $activeJobs[$jobId] ?? null;
+            unset($activeJobs[$jobId]);
+
+            if ($meta) {
+                QueueMonitor::query()->whereKey($meta['id'])->update([
+                    'status' => 'failed',
+                    'duration_ms' => (int) round((microtime(true) - $meta['start']) * 1000),
+                    'exception' => (string) $event->exception,
+                    'finished_at' => now(),
+                ]);
+            }
+        });
+    }
+
+    /**
+     * Apply stored SMTP and Email API settings to runtime mail configuration.
+     */
+    private function applyMailConfiguration(): void
+    {
+        if (! Schema::hasTable('settings')) {
+            return;
+        }
+
+        $email = Setting::valuesForGroup('email');
+        if ($email === []) {
+            return;
+        }
+
+        if (! empty($email['mail_mailer'])) {
+            config(['mail.default' => $email['mail_mailer']]);
+        }
+        if (! empty($email['mail_from_address'])) {
+            config(['mail.from.address' => $email['mail_from_address']]);
+        }
+        if (! empty($email['mail_from_name'])) {
+            config(['mail.from.name' => $email['mail_from_name']]);
+        }
+        if (! empty($email['mail_host'])) {
+            config(['mail.mailers.smtp.host' => $email['mail_host']]);
+        }
+        if (! empty($email['mail_port'])) {
+            config(['mail.mailers.smtp.port' => (int) $email['mail_port']]);
+        }
+        if (array_key_exists('mail_username', $email) && $email['mail_username'] !== null && $email['mail_username'] !== '') {
+            config(['mail.mailers.smtp.username' => $email['mail_username']]);
+        }
+        if (array_key_exists('mail_password', $email) && $email['mail_password'] !== null && $email['mail_password'] !== '') {
+            config(['mail.mailers.smtp.password' => $email['mail_password']]);
+        }
+        if (array_key_exists('mail_encryption', $email)) {
+            $scheme = match ($email['mail_encryption']) {
+                'ssl' => 'smtps',
+                'tls' => 'smtp',
+                default => null,
+            };
+            config(['mail.mailers.smtp.scheme' => $scheme]);
+        }
+        if (! empty($email['resend_api_key'])) {
+            config(['services.resend.key' => $email['resend_api_key']]);
+        }
+        if (! empty($email['postmark_token'])) {
+            config(['services.postmark.key' => $email['postmark_token']]);
+        }
+        if (! empty($email['ses_key'])) {
+            config(['services.ses.key' => $email['ses_key']]);
+        }
+        if (! empty($email['ses_secret'])) {
+            config(['services.ses.secret' => $email['ses_secret']]);
+        }
+        if (! empty($email['ses_region'])) {
+            config(['services.ses.region' => $email['ses_region']]);
+        }
     }
 }
