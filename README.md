@@ -73,6 +73,7 @@ php artisan vendor:publish --tag=stisla-all --force
 | `stisla-middleware` | `app/Http/Middleware` |
 | `stisla-requests` | `app/Http/Requests` |
 | `stisla-mail` | `app/Mail` |
+| `stisla-observers` | `app/Observers` |
 | `stisla-providers` | `app/Providers` |
 | `stisla-services` | `app/Services` |
 | `stisla-config` | `config` |
