@@ -20,6 +20,8 @@ use App\Http\Controllers\LaravelLogController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\LoginHistoryController;
 use App\Http\Controllers\LogRequestController;
+use App\Http\Controllers\MediaController;
+use App\Http\Controllers\MediaFolderController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OurTeamController;
 use App\Http\Controllers\PermissionController;
@@ -39,6 +41,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/lang/{locale}', [LocaleController::class, 'switch']);
 Route::get('/privacy-policy', PrivacyPolicyController::class)->name('privacy-policy');
+Route::get('/media/share/{token}', [MediaController::class, 'shared'])->name('media.shared');
 
 Route::prefix('app')->group(function () {
     Route::redirect('/', '/app/dashboard');
@@ -83,6 +86,10 @@ Route::prefix('app')->group(function () {
         Route::delete('/profile/sessions', [ProfileController::class, 'logoutOtherBrowserSessions'])->name('profile.sessions.destroy');
 
         Route::post('users/{user}/duplicate', [UserController::class, 'duplicate'])->name('users.duplicate');
+        Route::post('users/{user}/force-login', [UserController::class, 'forceLogin'])->name('users.force-login');
+        Route::post('users/stop-impersonate', [UserController::class, 'stopImpersonate'])->name('users.stop-impersonate');
+        Route::patch('users/{user}/block', [UserController::class, 'block'])->name('users.block');
+        Route::patch('users/{user}/unblock', [UserController::class, 'unblock'])->name('users.unblock');
         Route::get('users/export', [UserController::class, 'export'])->name('users.export');
         Route::get('users/export-pdf', [UserController::class, 'exportPdf'])->name('users.exportPdf');
         Route::get('users/template', [UserController::class, 'template'])->name('users.template');
@@ -97,6 +104,8 @@ Route::prefix('app')->group(function () {
         Route::get('permissions/export-pdf', [PermissionController::class, 'exportPdf'])->name('permissions.exportPdf');
         Route::resource('permissions', PermissionController::class)->except('show');
 
+        Route::post('menus/reorder', [MenuController::class, 'reorder'])->name('menus.reorder');
+        Route::patch('menus/{menu}/toggle-active', [MenuController::class, 'toggleActive'])->name('menus.toggleActive');
         Route::post('menus/{menu}/duplicate', [MenuController::class, 'duplicate'])->name('menus.duplicate');
         Route::get('menus/export-pdf', [MenuController::class, 'exportPdf'])->name('menus.exportPdf');
         Route::resource('menus', MenuController::class);
@@ -124,6 +133,21 @@ Route::prefix('app')->group(function () {
         Route::post('chat/{user:uuid}', [ChatController::class, 'send'])->name('chat.send');
         Route::get('chat/{user:uuid}/messages', [ChatController::class, 'fetchMessages'])->name('chat.messages');
         Route::delete('chat/{user:uuid}/clear', [ChatController::class, 'clear'])->name('chat.clear');
+
+        Route::get('media', [MediaController::class, 'index'])->name('media.index');
+        Route::post('media/upload', [MediaController::class, 'upload'])->name('media.upload');
+        Route::put('media/{mediaFile}/metadata', [MediaController::class, 'updateMetadata'])->name('media.metadata.update');
+        Route::post('media/{mediaFile}/versions', [MediaController::class, 'uploadVersion'])->name('media.versions.store');
+        Route::post('media/{mediaFile}/versions/{version}/restore', [MediaController::class, 'restoreVersion'])->name('media.versions.restore');
+        Route::post('media/{mediaFile}/crop', [MediaController::class, 'crop'])->name('media.crop');
+        Route::post('media/{mediaFile}/compress', [MediaController::class, 'compress'])->name('media.compress');
+        Route::post('media/{mediaFile}/share', [MediaController::class, 'share'])->name('media.share');
+        Route::get('media/{mediaFile}/download', [MediaController::class, 'download'])->name('media.download');
+        Route::delete('media/{mediaFile}', [MediaController::class, 'destroy'])->name('media.destroy');
+
+        Route::post('media-folders', [MediaFolderController::class, 'store'])->name('media-folders.store');
+        Route::put('media-folders/{folder}', [MediaFolderController::class, 'update'])->name('media-folders.update');
+        Route::delete('media-folders/{folder}', [MediaFolderController::class, 'destroy'])->name('media-folders.destroy');
 
         Route::get('backups', [BackupController::class, 'index'])->name('backups.index');
         Route::post('backups', [BackupController::class, 'create'])->name('backups.create');
