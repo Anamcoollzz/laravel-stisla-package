@@ -215,9 +215,10 @@
                           <button type="button"
                                   class="btn btn-sm btn-dark btn-delete"
                                   data-confirm-title="{{ __('Blacklist IP Address?') }}"
-                                  data-confirm-text="{{ __('Block :ip from accessing the application?', ['ip' = data-toggle="tooltip"> $history->ip_address]) }}"
+                                  data-confirm-text="{{ __('Block :ip from accessing the application?', ['ip' => $history->ip_address]) }}"
                                   data-confirm-button-text="{{ __('Block IP') }}"
-                                  title="{{ __('Block IP') }}">
+                                  title="{{ __('Block IP') }}"
+                                  data-toggle="tooltip">
                             <i class="fas fa-ban"></i>
                           </button>
                         </form>

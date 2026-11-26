@@ -228,9 +228,10 @@
                         <button type="button"
                                 class="btn btn-sm btn-danger btn-delete"
                                 data-confirm-title="{{ __('Revoke API Token?') }}"
-                                data-confirm-text="{{ __('Any application using :name will immediately lose API access.', ['name' = data-toggle="tooltip"> $token->name]) }}"
+                                data-confirm-text="{{ __('Any application using :name will immediately lose API access.', ['name' => $token->name]) }}"
                                 data-confirm-button-text="{{ __('Revoke') }}"
-                                title="{{ __('Revoke') }}">
+                                title="{{ __('Revoke') }}"
+                                data-toggle="tooltip">
                           <i class="fas fa-trash"></i>
                         </button>
                       </form>

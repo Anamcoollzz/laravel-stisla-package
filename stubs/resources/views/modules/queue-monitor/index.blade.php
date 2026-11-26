@@ -276,9 +276,10 @@
                     <td class="text-right">
                       <button type="button"
                               class="btn btn-sm btn-secondary btn-view-exception"
-                              data-title="{{ $job- data-toggle="tooltip">name }}"
+                              data-title="{{ $job->name }}"
                               data-exception="{{ $job->exception }}"
-                              title="{{ __('View Exception') }}">
+                              title="{{ __('View Exception') }}"
+                              data-toggle="tooltip">
                         <i class="fas fa-bug"></i>
                       </button>
                       @can('queue-monitor.create')
@@ -399,8 +400,10 @@
                       @if ($history->exception)
                         <button type="button"
                                 class="btn btn-sm btn-secondary btn-view-exception"
-                                data-title="{{ $history- data-toggle="tooltip">job_name }}"
-                                data-exception="{{ $history->exception }}">
+                                data-title="{{ $history->job_name }}"
+                                data-exception="{{ $history->exception }}"
+                                title="{{ __('View Exception') }}"
+                                data-toggle="tooltip">
                           <i class="fas fa-bug"></i>
                         </button>
                       @else
