@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\Api\SwaggerController;
 use App\Http\Controllers\ApiTokenController;
 use App\Http\Controllers\AppNotificationController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
@@ -42,6 +43,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/lang/{locale}', [LocaleController::class, 'switch']);
 Route::get('/privacy-policy', PrivacyPolicyController::class)->name('privacy-policy');
 Route::get('/media/share/{token}', [MediaController::class, 'shared'])->name('media.shared');
+Route::get('/api/documentation', [SwaggerController::class, 'ui'])->name('api.documentation');
+Route::get('/api/openapi.json', [SwaggerController::class, 'spec'])->name('api.openapi');
 
 Route::prefix('app')->group(function () {
     Route::redirect('/', '/app/dashboard');
