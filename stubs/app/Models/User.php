@@ -13,6 +13,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable(['uuid', 'name', 'first_name', 'last_name', 'email', 'google_id', 'avatar', 'facebook_url', 'twitter_url', 'github_url', 'instagram_url', 'role', 'phone', 'address', 'city', 'state', 'postal_code', 'password', 'last_logged_in', 'is_blocked', 'blocked_at', 'blocked_reason'])]
@@ -20,7 +21,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, HasRoles, Notifiable;
+    use HasApiTokens, HasFactory, HasRoles, Notifiable;
 
     /**
      * Boot model event hooks.

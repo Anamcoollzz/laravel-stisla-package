@@ -42,6 +42,7 @@ class StislaServiceProvider extends ServiceProvider
             'stisla-observers' => [$stubsPath.'/app/Observers' => app_path('Observers')],
             'stisla-providers' => [$stubsPath.'/app/Providers' => app_path('Providers')],
             'stisla-services' => [$stubsPath.'/app/Services' => app_path('Services')],
+            'stisla-bootstrap' => [$stubsPath.'/bootstrap/app.php' => base_path('bootstrap/app.php')],
             'stisla-config' => [$stubsPath.'/config' => config_path()],
             'stisla-views' => [$stubsPath.'/resources/views' => resource_path('views')],
             'stisla-public' => [$stubsPath.'/public' => public_path()],
