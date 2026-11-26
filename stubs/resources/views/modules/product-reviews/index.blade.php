@@ -211,7 +211,7 @@
                   <td class="text-center">
                     <div class="btn-group" role="group">
                       @can('product-reviews.view')
-                        <a href="{{ route('product-reviews.show', $review) }}" class="btn btn-sm btn-info" title="{{ __('View Details') }}">
+                        <a href="{{ route('product-reviews.show', $review) }}" class="btn btn-sm btn-info" title="{{ __('View Details') }}" data-toggle="tooltip">
                           <i class="fas fa-eye"></i>
                         </a>
                       @endcan
@@ -230,7 +230,7 @@
                         <form action="{{ route('product-reviews.destroy', $review) }}" method="POST" class="d-inline">
                           @csrf
                           @method('DELETE')
-                          <button type="button" class="btn btn-sm btn-danger btn-delete" title="{{ __('Delete') }}">
+                          <button type="button" class="btn btn-sm btn-danger btn-delete" title="{{ __('Delete') }}" data-toggle="tooltip">
                             <i class="fas fa-trash"></i>
                           </button>
                         </form>

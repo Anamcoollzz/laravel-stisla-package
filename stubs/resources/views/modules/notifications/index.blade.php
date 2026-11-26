@@ -111,11 +111,11 @@
                         <td class="small">{{ $notification->created_at?->format('d M Y H:i') ?? '-' }}</td>
                         <td>
                           <div class="d-flex flex-wrap" style="gap: 4px;">
-                            <a href="{{ route('notifications.show', $notification) }}" class="btn btn-info btn-sm" title="{{ __('Detail') }}">
+                            <a href="{{ route('notifications.show', $notification) }}" class="btn btn-info btn-sm" title="{{ __('Detail') }}" data-toggle="tooltip">
                               <i class="fas fa-eye"></i>
                             </a>
                             @can('notifications.edit')
-                              <a href="{{ route('notifications.edit', $notification) }}" class="btn btn-warning btn-sm" title="{{ __('Edit') }}">
+                              <a href="{{ route('notifications.edit', $notification) }}" class="btn btn-warning btn-sm" title="{{ __('Edit') }}" data-toggle="tooltip">
                                 <i class="fas fa-edit"></i>
                               </a>
                             @endcan
@@ -123,7 +123,7 @@
                               <form action="{{ route('notifications.destroy', $notification) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm btn-delete" title="{{ __('Delete') }}">
+                                <button type="submit" class="btn btn-danger btn-sm btn-delete" title="{{ __('Delete') }}" data-toggle="tooltip">
                                   <i class="fas fa-trash"></i>
                                 </button>
                               </form>

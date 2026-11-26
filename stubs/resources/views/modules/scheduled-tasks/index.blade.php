@@ -161,7 +161,7 @@
                         <form action="{{ route('scheduled-tasks.run-now') }}" method="POST" class="d-inline">
                           @csrf
                           <input type="hidden" name="task_key" value="{{ $task['task_key'] }}">
-                          <button type="submit" class="btn btn-sm btn-success" title="{{ __('Run Now') }}">
+                          <button type="submit" class="btn btn-sm btn-success" title="{{ __('Run Now') }}" data-toggle="tooltip">
                             <i class="fas fa-play mr-1"></i> {{ __('Run Now') }}
                           </button>
                         </form>
@@ -193,7 +193,7 @@
               <button type="button"
                       class="btn btn-danger btn-sm btn-delete"
                       data-confirm-title="{{ __('Clear Execution History?') }}"
-                      data-confirm-text="{{ __('All recorded scheduled task execution logs will be permanently deleted!') }}">
+                      data-confirm-text="{{ __('All recorded scheduled task execution logs will be permanently deleted!') }}" data-toggle="tooltip">
                 <i class="fas fa-trash mr-1"></i> {{ __('Clear History') }}
               </button>
             </form>
@@ -290,7 +290,7 @@
                       <form action="{{ route('scheduled-tasks.destroy', $run) }}" method="POST" class="d-inline">
                         @csrf
                         @method('DELETE')
-                        <button type="button" class="btn btn-sm btn-danger btn-delete" title="{{ __('Delete') }}">
+                        <button type="button" class="btn btn-sm btn-danger btn-delete" title="{{ __('Delete') }}" data-toggle="tooltip">
                           <i class="fas fa-trash"></i>
                         </button>
                       </form>

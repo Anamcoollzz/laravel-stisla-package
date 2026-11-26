@@ -554,6 +554,42 @@
         }
       });
     })();
+
+    (function($) {
+      var tooltipSelector = '[data-toggle="tooltip"], table td a.btn[title], table td button.btn[title]';
+
+      function initTableTooltips(context) {
+        var $scope = context ? $(context) : $(document);
+        $scope.find(tooltipSelector).each(function() {
+          var $el = $(this);
+          if (! $el.data('bs.tooltip')) {
+            $el.tooltip({
+              container: 'body',
+              trigger: 'hover'
+            });
+          }
+        });
+      }
+
+      $(function() {
+        initTableTooltips(document);
+      });
+
+      $(document).on('draw.dt', function(e) {
+        $('.tooltip').remove();
+        initTableTooltips(e.target || document);
+      });
+
+      $(document).on('mouseenter', tooltipSelector, function() {
+        var $el = $(this);
+        if (! $el.data('bs.tooltip')) {
+          $el.tooltip({
+            container: 'body',
+            trigger: 'hover'
+          }).tooltip('show');
+        }
+      });
+    })(jQuery);
   </script>
 
   <!-- Page Specific JS File -->

@@ -160,19 +160,19 @@
                       </td>
                       <td>
                         <div class="btn-group" role="group">
-                          <a href="{{ route('our-teams.show', $team) }}" class="btn btn-sm btn-info" title="{{ __('View Details') }}">
+                          <a href="{{ route('our-teams.show', $team) }}" class="btn btn-sm btn-info" title="{{ __('View Details') }}" data-toggle="tooltip">
                             <i class="fas fa-eye"></i>
                           </a>
                           @can('our-teams.create')
                             <form action="{{ route('our-teams.duplicate', $team) }}" method="POST" class="d-inline">
                               @csrf
-                              <button type="submit" class="btn btn-sm btn-secondary" title="{{ __('Duplicate') }}">
+                              <button type="submit" class="btn btn-sm btn-secondary" title="{{ __('Duplicate') }}" data-toggle="tooltip">
                                 <i class="fas fa-copy"></i>
                               </button>
                             </form>
                           @endcan
                           @can('our-teams.edit')
-                            <a href="{{ route('our-teams.edit', $team) }}" class="btn btn-sm btn-warning" title="{{ __('Edit') }}">
+                            <a href="{{ route('our-teams.edit', $team) }}" class="btn btn-sm btn-warning" title="{{ __('Edit') }}" data-toggle="tooltip">
                               <i class="fas fa-pencil-alt"></i>
                             </a>
                           @endcan
@@ -180,7 +180,7 @@
                             <form action="{{ route('our-teams.destroy', $team) }}" method="POST" class="d-inline">
                               @csrf
                               @method('DELETE')
-                              <button type="button" class="btn btn-sm btn-danger btn-delete" title="{{ __('Delete') }}">
+                              <button type="button" class="btn btn-sm btn-danger btn-delete" title="{{ __('Delete') }}" data-toggle="tooltip">
                                 <i class="fas fa-trash"></i>
                               </button>
                             </form>

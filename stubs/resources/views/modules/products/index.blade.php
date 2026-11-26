@@ -185,7 +185,7 @@
                 <button type="submit" class="btn btn-primary btn-sm btn-block mr-1">
                   <i class="fas fa-search"></i> {{ __('Filter') }}
                 </button>
-                <a href="{{ route('products.index') }}" class="btn btn-secondary btn-sm" title="{{ __('Reset Filter') }}">
+                <a href="{{ route('products.index') }}" class="btn btn-secondary btn-sm" title="{{ __('Reset Filter') }}" data-toggle="tooltip">
                   <i class="fas fa-undo"></i>
                 </a>
               </div>

@@ -153,7 +153,7 @@
                               class="btn btn-sm btn-warning btn-rename-project-item"
                               data-target-path="{{ $dir['path'] }}"
                               data-current-name="{{ $dir['name'] }}"
-                              title="{{ __('Rename') }}">
+                              title="{{ __('Rename') }}" data-toggle="tooltip">
                         <i class="fas fa-i-cursor"></i>
                       </button>
                     @endcan
@@ -203,7 +203,7 @@
                               class="btn btn-sm btn-warning btn-rename-project-item"
                               data-target-path="{{ $file['path'] }}"
                               data-current-name="{{ $file['name'] }}"
-                              title="{{ __('Rename') }}">
+                              title="{{ __('Rename') }}" data-toggle="tooltip">
                         <i class="fas fa-i-cursor"></i>
                       </button>
                     @endcan

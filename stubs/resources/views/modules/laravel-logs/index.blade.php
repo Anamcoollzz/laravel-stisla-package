@@ -346,7 +346,7 @@
                     @endif
                   </td>
                   <td class="text-center">
-                    <button type="button" class="btn btn-sm btn-info btn-view-log" data-index="{{ $idx }}" title="{{ __('Lihat Detail & Stacktrace') }}">
+                    <button type="button" class="btn btn-sm btn-info btn-view-log" data-index="{{ $idx }}" title="{{ __('Lihat Detail & Stacktrace') }}" data-toggle="tooltip">
                       <i class="fas fa-eye"></i> Detail
                     </button>
                   </td>

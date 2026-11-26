@@ -148,12 +148,12 @@
                   <td class="text-center">
                     <div class="btn-group" role="group">
                       @can('footer-product-categories.view')
-                        <a href="{{ route('footer-product-categories.show', $item) }}" class="btn btn-sm btn-info" title="{{ __('View') }}">
+                        <a href="{{ route('footer-product-categories.show', $item) }}" class="btn btn-sm btn-info" title="{{ __('View') }}" data-toggle="tooltip">
                           <i class="fas fa-eye"></i>
                         </a>
                       @endcan
                       @can('footer-product-categories.edit')
-                        <a href="{{ route('footer-product-categories.edit', $item) }}" class="btn btn-sm btn-warning" title="{{ __('Edit') }}">
+                        <a href="{{ route('footer-product-categories.edit', $item) }}" class="btn btn-sm btn-warning" title="{{ __('Edit') }}" data-toggle="tooltip">
                           <i class="fas fa-pencil-alt"></i>
                         </a>
                       @endcan
@@ -161,7 +161,7 @@
                         <form action="{{ route('footer-product-categories.destroy', $item) }}" method="POST" class="d-inline">
                           @csrf
                           @method('DELETE')
-                          <button type="button" class="btn btn-sm btn-danger btn-delete" title="{{ __('Delete') }}">
+                          <button type="button" class="btn btn-sm btn-danger btn-delete" title="{{ __('Delete') }}" data-toggle="tooltip">
                             <i class="fas fa-trash"></i>
                           </button>
                         </form>

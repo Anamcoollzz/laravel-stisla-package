@@ -145,19 +145,19 @@
                       </td>
                       <td class="text-center">
                         <div class="btn-group">
-                          <a href="{{ route('product-colors.show', $color) }}" class="btn btn-sm btn-info" title="{{ __('View Details') }}">
+                          <a href="{{ route('product-colors.show', $color) }}" class="btn btn-sm btn-info" title="{{ __('View Details') }}" data-toggle="tooltip">
                             <i class="fas fa-eye"></i>
                           </a>
                           @can('product-colors.create')
                             <form action="{{ route('product-colors.duplicate', $color) }}" method="POST" class="d-inline">
                               @csrf
-                              <button type="submit" class="btn btn-sm btn-secondary" title="{{ __('Duplicate') }}">
+                              <button type="submit" class="btn btn-sm btn-secondary" title="{{ __('Duplicate') }}" data-toggle="tooltip">
                                 <i class="fas fa-copy"></i>
                               </button>
                             </form>
                           @endcan
                           @can('product-colors.edit')
-                            <a href="{{ route('product-colors.edit', $color) }}" class="btn btn-sm btn-warning" title="{{ __('Edit') }}">
+                            <a href="{{ route('product-colors.edit', $color) }}" class="btn btn-sm btn-warning" title="{{ __('Edit') }}" data-toggle="tooltip">
                               <i class="fas fa-pencil-alt"></i>
                             </a>
                           @endcan
@@ -165,7 +165,7 @@
                             <form action="{{ route('product-colors.destroy', $color) }}" method="POST" class="d-inline">
                               @csrf
                               @method('DELETE')
-                              <button type="button" class="btn btn-sm btn-danger btn-delete" title="{{ __('Delete') }}">
+                              <button type="button" class="btn btn-sm btn-danger btn-delete" title="{{ __('Delete') }}" data-toggle="tooltip">
                                 <i class="fas fa-trash"></i>
                               </button>
                             </form>

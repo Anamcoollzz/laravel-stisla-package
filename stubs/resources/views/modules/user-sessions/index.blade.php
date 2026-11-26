@@ -196,7 +196,7 @@
                           <button type="button"
                                   class="btn btn-sm btn-dark btn-delete"
                                   data-confirm-title="{{ __('Blacklist IP Address?') }}"
-                                  data-confirm-text="{{ __('Block :ip from accessing the application?', ['ip' => $session->ip_address]) }}"
+                                  data-confirm-text="{{ __('Block :ip from accessing the application?', ['ip' = data-toggle="tooltip"> $session->ip_address]) }}"
                                   data-confirm-button-text="{{ __('Block IP') }}"
                                   title="{{ __('Block IP') }}">
                             <i class="fas fa-ban"></i>
@@ -212,7 +212,7 @@
                           <button type="button"
                                   class="btn btn-sm btn-danger btn-delete"
                                   data-confirm-title="{{ __('Force Logout Session?') }}"
-                                  data-confirm-text="{{ __('Force logout this device (:ip)?', ['ip' => $session->ip_address]) }}"
+                                  data-confirm-text="{{ __('Force logout this device (:ip)?', ['ip' = data-toggle="tooltip"> $session->ip_address]) }}"
                                   title="{{ __('Force Logout') }}">
                             <i class="fas fa-sign-out-alt mr-1"></i> {{ __('Force Logout') }}
                           </button>
@@ -226,7 +226,7 @@
                           <button type="button"
                                   class="btn btn-sm btn-warning btn-delete"
                                   data-confirm-title="{{ __('Force Logout User?') }}"
-                                  data-confirm-text="{{ __('Force logout all active sessions for :name?', ['name' => $session->user_name]) }}"
+                                  data-confirm-text="{{ __('Force logout all active sessions for :name?', ['name' = data-toggle="tooltip"> $session->user_name]) }}"
                                   title="{{ __('Force Logout User') }}">
                             <i class="fas fa-user-slash mr-1"></i> {{ __('Force Logout User') }}
                           </button>

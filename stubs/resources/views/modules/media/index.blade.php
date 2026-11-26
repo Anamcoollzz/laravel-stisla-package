@@ -708,7 +708,7 @@
                                 class="btn btn-xs btn-outline-secondary js-metadata-media"
                                 data-update-url="{{ route('media.metadata.update', $file) }}"
                                 data-file='@json($file)'
-                                title="{{ __('Metadata & Permissions') }}">
+                                title="{{ __('Metadata & Permissions') }}" data-toggle="tooltip">
                           <i class="fas fa-sliders-h"></i>
                         </button>
                         <button type="button"
@@ -732,7 +732,7 @@
                         </button>
                       @endcan
 
-                      <a href="{{ route('media.download', $file) }}" class="btn btn-xs btn-outline-dark" title="{{ __('Download') }}">
+                      <a href="{{ route('media.download', $file) }}" class="btn btn-xs btn-outline-dark" title="{{ __('Download') }}" data-toggle="tooltip">
                         <i class="fas fa-download"></i>
                       </a>
 

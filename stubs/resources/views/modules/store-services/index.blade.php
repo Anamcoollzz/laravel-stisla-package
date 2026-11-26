@@ -179,12 +179,12 @@
                   <td class="text-center">
                     <div class="btn-group" role="group">
                       @can('store-services.view')
-                        <a href="{{ route('store-services.show', $item) }}" class="btn btn-sm btn-info" title="{{ __('View') }}">
+                        <a href="{{ route('store-services.show', $item) }}" class="btn btn-sm btn-info" title="{{ __('View') }}" data-toggle="tooltip">
                           <i class="fas fa-eye"></i>
                         </a>
                       @endcan
                       @can('store-services.edit')
-                        <a href="{{ route('store-services.edit', $item) }}" class="btn btn-sm btn-warning" title="{{ __('Edit') }}">
+                        <a href="{{ route('store-services.edit', $item) }}" class="btn btn-sm btn-warning" title="{{ __('Edit') }}" data-toggle="tooltip">
                           <i class="fas fa-pencil-alt"></i>
                         </a>
                       @endcan
@@ -192,7 +192,7 @@
                         <form action="{{ route('store-services.destroy', $item) }}" method="POST" class="d-inline">
                           @csrf
                           @method('DELETE')
-                          <button type="button" class="btn btn-sm btn-danger btn-delete" title="{{ __('Delete') }}">
+                          <button type="button" class="btn btn-sm btn-danger btn-delete" title="{{ __('Delete') }}" data-toggle="tooltip">
                             <i class="fas fa-trash"></i>
                           </button>
                         </form>

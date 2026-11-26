@@ -82,11 +82,11 @@
                     <span class="badge badge-info px-2 py-1">{{ $category->news_count }} berita</span>
                   </td>
                   <td class="text-center text-nowrap">
-                    <a href="{{ route('news-categories.show', $category) }}" class="btn btn-sm btn-icon btn-info mr-1" title="{{ __('Detail') }}">
+                    <a href="{{ route('news-categories.show', $category) }}" class="btn btn-sm btn-icon btn-info mr-1" title="{{ __('Detail') }}" data-toggle="tooltip">
                       <i class="fas fa-eye"></i>
                     </a>
                     @can('news-categories.edit')
-                      <a href="{{ route('news-categories.edit', $category) }}" class="btn btn-sm btn-icon btn-primary mr-1" title="{{ __('Edit') }}">
+                      <a href="{{ route('news-categories.edit', $category) }}" class="btn btn-sm btn-icon btn-primary mr-1" title="{{ __('Edit') }}" data-toggle="tooltip">
                         <i class="fas fa-pencil-alt"></i>
                       </a>
                     @endcan
@@ -94,7 +94,7 @@
                       <form action="{{ route('news-categories.destroy', $category) }}" method="POST" class="d-inline">
                         @csrf
                         @method('DELETE')
-                        <button type="button" class="btn btn-sm btn-icon btn-danger btn-delete" title="{{ __('Hapus') }}">
+                        <button type="button" class="btn btn-sm btn-icon btn-danger btn-delete" title="{{ __('Hapus') }}" data-toggle="tooltip">
                           <i class="fas fa-trash"></i>
                         </button>
                       </form>

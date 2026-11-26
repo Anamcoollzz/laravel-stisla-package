@@ -167,7 +167,7 @@
                       <form action="{{ route('payment-methods.destroy', $item->id) }}" method="POST" class="d-inline">
                         @csrf
                         @method('DELETE')
-                        <button type="button" class="btn btn-sm btn-danger btn-delete" title="{{ __('Hapus') }}">
+                        <button type="button" class="btn btn-sm btn-danger btn-delete" title="{{ __('Hapus') }}" data-toggle="tooltip">
                           <i class="fas fa-trash"></i>
                         </button>
                       </form>

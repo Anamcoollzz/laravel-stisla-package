@@ -229,7 +229,7 @@
                         <form action="{{ route('queue-monitor.pending.destroy', $job->id) }}" method="POST" class="d-inline">
                           @csrf
                           @method('DELETE')
-                          <button type="button" class="btn btn-sm btn-danger btn-delete" title="{{ __('Delete') }}">
+                          <button type="button" class="btn btn-sm btn-danger btn-delete" title="{{ __('Delete') }}" data-toggle="tooltip">
                             <i class="fas fa-trash"></i>
                           </button>
                         </form>
@@ -276,7 +276,7 @@
                     <td class="text-right">
                       <button type="button"
                               class="btn btn-sm btn-secondary btn-view-exception"
-                              data-title="{{ $job->name }}"
+                              data-title="{{ $job- data-toggle="tooltip">name }}"
                               data-exception="{{ $job->exception }}"
                               title="{{ __('View Exception') }}">
                         <i class="fas fa-bug"></i>
@@ -284,7 +284,7 @@
                       @can('queue-monitor.create')
                         <form action="{{ route('queue-monitor.failed.retry', $job->uuid) }}" method="POST" class="d-inline">
                           @csrf
-                          <button type="submit" class="btn btn-sm btn-warning" title="{{ __('Retry') }}">
+                          <button type="submit" class="btn btn-sm btn-warning" title="{{ __('Retry') }}" data-toggle="tooltip">
                             <i class="fas fa-redo"></i>
                           </button>
                         </form>
@@ -293,7 +293,7 @@
                         <form action="{{ route('queue-monitor.failed.forget', $job->uuid) }}" method="POST" class="d-inline">
                           @csrf
                           @method('DELETE')
-                          <button type="button" class="btn btn-sm btn-danger btn-delete" title="{{ __('Delete') }}">
+                          <button type="button" class="btn btn-sm btn-danger btn-delete" title="{{ __('Delete') }}" data-toggle="tooltip">
                             <i class="fas fa-trash"></i>
                           </button>
                         </form>
@@ -399,7 +399,7 @@
                       @if ($history->exception)
                         <button type="button"
                                 class="btn btn-sm btn-secondary btn-view-exception"
-                                data-title="{{ $history->job_name }}"
+                                data-title="{{ $history- data-toggle="tooltip">job_name }}"
                                 data-exception="{{ $history->exception }}">
                           <i class="fas fa-bug"></i>
                         </button>

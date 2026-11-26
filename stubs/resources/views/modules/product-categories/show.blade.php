@@ -151,7 +151,7 @@
               <form action="{{ route('product-categories.duplicate', $category) }}" method="POST" class="d-inline mr-1">
                 @csrf
                 @can('product-categories.create')
-                  <button type="submit" class="btn btn-outline-secondary btn-sm" title="{{ __('Duplicate') }}">
+                  <button type="submit" class="btn btn-outline-secondary btn-sm" title="{{ __('Duplicate') }}" data-toggle="tooltip">
                     <i class="fas fa-copy"></i> {{ __('Duplicate') }}
                   </button>
                 @endcan
@@ -238,11 +238,11 @@
                           @endif
                         </td>
                         <td class="text-right">
-                          <a href="{{ route('product-categories.show', $child) }}" class="btn btn-info btn-sm" title="{{ __('View') }}">
+                          <a href="{{ route('product-categories.show', $child) }}" class="btn btn-info btn-sm" title="{{ __('View') }}" data-toggle="tooltip">
                             <i class="fas fa-eye"></i>
                           </a>
                           @can('product-categories.edit')
-                            <a href="{{ route('product-categories.edit', $child) }}" class="btn btn-warning btn-sm" title="{{ __('Edit') }}">
+                            <a href="{{ route('product-categories.edit', $child) }}" class="btn btn-warning btn-sm" title="{{ __('Edit') }}" data-toggle="tooltip">
                               <i class="fas fa-pencil-alt"></i>
                             </a>
                           @endcan

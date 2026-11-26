@@ -192,14 +192,14 @@
                       </td>
                       <td class="text-center">
                         <div class="btn-group" role="group">
-                          <a href="{{ route('blog-comments.show', $comment) }}" class="btn btn-sm btn-info" title="{{ __('View Details') }}">
+                          <a href="{{ route('blog-comments.show', $comment) }}" class="btn btn-sm btn-info" title="{{ __('View Details') }}" data-toggle="tooltip">
                             <i class="fas fa-eye"></i>
                           </a>
                           @can('blog-comments.delete')
                             <form action="{{ route('blog-comments.destroy', $comment) }}" method="POST" class="d-inline">
                               @csrf
                               @method('DELETE')
-                              <button type="button" class="btn btn-sm btn-danger btn-delete" title="{{ __('Delete') }}">
+                              <button type="button" class="btn btn-sm btn-danger btn-delete" title="{{ __('Delete') }}" data-toggle="tooltip">
                                 <i class="fas fa-trash"></i>
                               </button>
                             </form>

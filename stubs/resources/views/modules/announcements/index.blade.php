@@ -118,12 +118,12 @@
                         <td>
                           <div class="d-flex flex-wrap" style="gap: 4px;">
                             @can('announcements.view')
-                              <a href="{{ route('announcements.show', $announcement) }}" class="btn btn-info btn-sm" title="{{ __('Detail') }}">
+                              <a href="{{ route('announcements.show', $announcement) }}" class="btn btn-info btn-sm" title="{{ __('Detail') }}" data-toggle="tooltip">
                                 <i class="fas fa-eye"></i>
                               </a>
                             @endcan
                             @can('announcements.edit')
-                              <a href="{{ route('announcements.edit', $announcement) }}" class="btn btn-warning btn-sm" title="{{ __('Edit') }}">
+                              <a href="{{ route('announcements.edit', $announcement) }}" class="btn btn-warning btn-sm" title="{{ __('Edit') }}" data-toggle="tooltip">
                                 <i class="fas fa-edit"></i>
                               </a>
                               <form action="{{ route('announcements.toggleActive', $announcement) }}" method="POST" class="d-inline">
@@ -137,7 +137,7 @@
                             @can('announcements.create')
                               <form action="{{ route('announcements.duplicate', $announcement) }}" method="POST" class="d-inline">
                                 @csrf
-                                <button type="submit" class="btn btn-primary btn-sm" title="{{ __('Duplicate') }}">
+                                <button type="submit" class="btn btn-primary btn-sm" title="{{ __('Duplicate') }}" data-toggle="tooltip">
                                   <i class="fas fa-copy"></i>
                                 </button>
                               </form>
@@ -146,7 +146,7 @@
                               <form action="{{ route('announcements.destroy', $announcement) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm btn-delete" title="{{ __('Delete') }}">
+                                <button type="submit" class="btn btn-danger btn-sm btn-delete" title="{{ __('Delete') }}" data-toggle="tooltip">
                                   <i class="fas fa-trash"></i>
                                 </button>
                               </form>

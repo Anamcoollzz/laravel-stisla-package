@@ -183,14 +183,14 @@
                         <i class="fas fa-reply"></i>
                       </button>
                     @endcan
-                    <a href="{{ route('news-comments.show', $comment) }}" class="btn btn-sm btn-icon btn-info mr-1" title="{{ __('Detail') }}">
+                    <a href="{{ route('news-comments.show', $comment) }}" class="btn btn-sm btn-icon btn-info mr-1" title="{{ __('Detail') }}" data-toggle="tooltip">
                       <i class="fas fa-eye"></i>
                     </a>
                     @can('news-comments.delete')
                       <form action="{{ route('news-comments.destroy', $comment) }}" method="POST" class="d-inline">
                         @csrf
                         @method('DELETE')
-                        <button type="button" class="btn btn-sm btn-icon btn-danger btn-delete" title="{{ __('Hapus') }}">
+                        <button type="button" class="btn btn-sm btn-icon btn-danger btn-delete" title="{{ __('Hapus') }}" data-toggle="tooltip">
                           <i class="fas fa-trash"></i>
                         </button>
                       </form>

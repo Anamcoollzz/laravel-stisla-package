@@ -21,7 +21,7 @@
           @endcan
 
           @if ($isDropdown)
-            <button type="button" class="btn btn-xs btn-light btn-toggle-children px-2 py-1" title="{{ __('Toggle children') }}">
+            <button type="button" class="btn btn-xs btn-light btn-toggle-children px-2 py-1" title="{{ __('Toggle children') }}" data-toggle="tooltip">
               <i class="fas fa-chevron-down"></i>
             </button>
           @endif
@@ -78,7 +78,7 @@
           @can('menus.edit')
             <button type="button"
                     class="btn btn-sm btn-outline-primary js-toggle-inline-edit"
-                    title="{{ __('Inline Edit') }}">
+                    title="{{ __('Inline Edit') }}" data-toggle="tooltip">
               <i class="fas fa-pencil-alt"></i>
             </button>
           @endcan
@@ -87,7 +87,7 @@
             <button type="button"
                     class="btn btn-sm btn-outline-warning js-duplicate-menu"
                     data-url="{{ route('menus.duplicate', $menu) }}"
-                    title="{{ __('Duplicate') }}">
+                    title="{{ __('Duplicate') }}" data-toggle="tooltip">
               <i class="fas fa-copy"></i>
             </button>
           @endcan

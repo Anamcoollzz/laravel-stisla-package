@@ -153,7 +153,7 @@
             <input type="text" name="spec_values[]" class="form-control form-control-sm" placeholder="{{ __('e.g. Cotton 100%, 25x15 cm') }}">
           </div>
           <div class="col-md-1 col-2 text-right">
-            <button type="button" class="btn btn-sm btn-outline-danger btn-remove-spec" title="{{ __('Remove') }}">
+            <button type="button" class="btn btn-sm btn-outline-danger btn-remove-spec" title="{{ __('Remove') }}" data-toggle="tooltip">
               <i class="fas fa-times"></i>
             </button>
           </div>
@@ -297,7 +297,7 @@
                       <input type="text" name="spec_values[]" class="form-control form-control-sm" placeholder="{{ __('e.g. 100% Cotton') }}">
                     </div>
                     <div class="col-md-1 col-2 text-right">
-                      <button type="button" class="btn btn-sm btn-outline-danger btn-remove-spec" title="{{ __('Remove') }}">
+                      <button type="button" class="btn btn-sm btn-outline-danger btn-remove-spec" title="{{ __('Remove') }}" data-toggle="tooltip">
                         <i class="fas fa-times"></i>
                       </button>
                     </div>

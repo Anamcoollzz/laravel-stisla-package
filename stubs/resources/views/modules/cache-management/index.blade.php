@@ -94,7 +94,7 @@
                         class="btn btn-sm btn-danger btn-delete"
                         data-confirm-title="{{ __('Flush Stisla Caches?') }}"
                         data-confirm-text="{{ __('Sidebar menus, settings, IP blacklist, and permission caches will be cleared.') }}"
-                        data-confirm-button-text="{{ __('Flush All') }}">
+                        data-confirm-button-text="{{ __('Flush All') }}" data-toggle="tooltip">
                   <i class="fas fa-broom mr-1"></i> {{ __('Flush All Stisla') }}
                 </button>
               </form>
@@ -130,7 +130,7 @@
                           <form action="{{ route('cache-management.forget-key') }}" method="POST" class="d-inline">
                             @csrf
                             <input type="hidden" name="key" value="{{ $item['key'] }}">
-                            <button type="submit" class="btn btn-sm btn-warning" title="{{ __('Flush Key') }}">
+                            <button type="submit" class="btn btn-sm btn-warning" title="{{ __('Flush Key') }}" data-toggle="tooltip">
                               <i class="fas fa-sync-alt mr-1"></i> {{ __('Flush') }}
                             </button>
                           </form>

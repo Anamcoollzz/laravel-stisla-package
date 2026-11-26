@@ -196,7 +196,7 @@
                               class="btn btn-sm btn-warning btn-rename-item"
                               data-target-path="{{ $dir['path'] }}"
                               data-current-name="{{ $dir['name'] }}"
-                              title="{{ __('Rename') }}">
+                              title="{{ __('Rename') }}" data-toggle="tooltip">
                         <i class="fas fa-edit"></i>
                       </button>
                     @endcan
@@ -240,7 +240,7 @@
                         <i class="fas fa-eye"></i>
                       </button>
                     @elseif ($file['public_url'])
-                      <a href="{{ $file['public_url'] }}" target="_blank" rel="noopener" class="btn btn-sm btn-secondary" title="{{ __('Open Public URL') }}">
+                      <a href="{{ $file['public_url'] }}" target="_blank" rel="noopener" class="btn btn-sm btn-secondary" title="{{ __('Open Public URL') }}" data-toggle="tooltip">
                         <i class="fas fa-external-link-alt"></i>
                       </a>
                     @endif
@@ -259,7 +259,7 @@
                               class="btn btn-sm btn-warning btn-rename-item"
                               data-target-path="{{ $file['path'] }}"
                               data-current-name="{{ $file['name'] }}"
-                              title="{{ __('Rename') }}">
+                              title="{{ __('Rename') }}" data-toggle="tooltip">
                         <i class="fas fa-edit"></i>
                       </button>
                     @endcan

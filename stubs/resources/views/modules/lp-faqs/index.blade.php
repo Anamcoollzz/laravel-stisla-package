@@ -88,19 +88,19 @@
                     @endif
                   </td>
                   <td>
-                    <a href="{{ route('lp-faqs.show', $item) }}" class="btn btn-info btn-sm" title="{{ __('Detail') }}">
+                    <a href="{{ route('lp-faqs.show', $item) }}" class="btn btn-info btn-sm" title="{{ __('Detail') }}" data-toggle="tooltip">
                       <i class="fas fa-eye"></i>
                     </a>
                     @can('lp-faqs.create')
                       <form action="{{ route('lp-faqs.duplicate', $item) }}" method="POST" class="d-inline">
                         @csrf
-                        <button type="submit" class="btn btn-secondary btn-sm" title="{{ __('Duplikat') }}">
+                        <button type="submit" class="btn btn-secondary btn-sm" title="{{ __('Duplikat') }}" data-toggle="tooltip">
                           <i class="fas fa-copy"></i>
                         </button>
                       </form>
                     @endcan
                     @can('lp-faqs.edit')
-                      <a href="{{ route('lp-faqs.edit', $item) }}" class="btn btn-warning btn-sm" title="{{ __('Edit') }}">
+                      <a href="{{ route('lp-faqs.edit', $item) }}" class="btn btn-warning btn-sm" title="{{ __('Edit') }}" data-toggle="tooltip">
                         <i class="fas fa-edit"></i>
                       </a>
                     @endcan
@@ -108,7 +108,7 @@
                       <form action="{{ route('lp-faqs.destroy', $item) }}" method="POST" class="d-inline">
                         @csrf
                         @method('DELETE')
-                        <button type="button" class="btn btn-danger btn-sm btn-delete" title="{{ __('Hapus') }}">
+                        <button type="button" class="btn btn-danger btn-sm btn-delete" title="{{ __('Hapus') }}" data-toggle="tooltip">
                           <i class="fas fa-trash"></i>
                         </button>
                       </form>

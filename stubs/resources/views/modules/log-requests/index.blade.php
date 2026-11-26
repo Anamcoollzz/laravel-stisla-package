@@ -266,7 +266,7 @@
                         <form action="{{ route('log-requests.destroy', $log->id) }}" method="POST" class="d-inline ml-1">
                           @csrf
                           @method('DELETE')
-                          <button type="button" class="btn btn-sm btn-danger btn-delete" title="{{ __('Hapus') }}">
+                          <button type="button" class="btn btn-sm btn-danger btn-delete" title="{{ __('Hapus') }}" data-toggle="tooltip">
                             <i class="fas fa-trash"></i>
                           </button>
                         </form>
